@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhD Resource Hub</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f3;
+      --bg-tertiary: #efede8;
+      --text: #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --text-tertiary: #9b9b9b;
+      --border: rgba(0,0,0,0.1);
+      --border-md: rgba(0,0,0,0.18);
+      --border-strong: rgba(0,0,0,0.28);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --blue-bg: #E6F1FB; --blue-text: #0C447C; --blue-border: #185FA5;
+      --green-bg: #EAF3DE; --green-text: #27500A;
+      --purple-bg: #EEEDFE; --purple-text: #3C3489;
+      --amber-bg: #FAEEDA; --amber-text: #633806;
+      --coral-bg: #FAECE7; --coral-text: #712B13;
+      --highlight: #FAEEDA;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1c;
+        --bg-secondary: #262626;
+        --bg-tertiary: #2e2e2e;
+        --text: #f0f0f0;
+        --text-secondary: #a0a0a0;
+        --text-tertiary: #6a6a6a;
+        --border: rgba(255,255,255,0.1);
+        --border-md: rgba(255,255,255,0.18);
+        --border-strong: rgba(255,255,255,0.28);
+        --blue-bg: #0c2d4a; --blue-text: #85B7EB;
+        --green-bg: #173404; --green-text: #C0DD97;
+        --purple-bg: #26215C; --purple-text: #AFA9EC;
+        --amber-bg: #412402; --amber-text: #FAC775;
+        --coral-bg: #4A1B0C; --coral-text: #F0997B;
+        --highlight: #412402;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-tertiary);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar-brand { font-size: 15px; font-weight: 500; color: var(--text); }
+    .topbar-brand span { color: var(--text-secondary); font-weight: 400; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── SEARCH ── */
+    .search-wrap { position: relative; margin-bottom: 1.5rem; }
+    .search-wrap svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 10px 14px 10px 38px;
+      border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border-md);
+      background: var(--bg);
+      font-size: 14px; color: var(--text);
+      outline: none; transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--blue-border); }
+    .search-input::placeholder { color: var(--text-tertiary); }
+
+    /* ── SEARCH RESULTS ── */
+    .search-results { display: none; margin-bottom: 1.5rem; }
+    .search-results.visible { display: block; }
+    .search-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab {
+      padding: 6px 15px; border-radius: 20px;
+      border: 0.5px solid var(--border-md);
+      background: transparent; font-size: 13px;
+      cursor: pointer; color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+    .tab.active { background: var(--bg); color: var(--text); border-color: var(--border-strong); font-weight: 500; }
+    .tab:hover:not(.active) { background: var(--bg); }
+
+    /* ── SECTIONS ── */
+    .section { display: none; }
+    .section.active { display: block; }
+    .sec-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .sec-title { font-size: 14px; font-weight: 500; color: var(--text); }
+    .btn-row { display: flex; gap: 6px; }
+
+    /* ── BUTTONS ── */
+    .add-btn {
+      padding: 6px 13px; border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-md);
+      background: transparent; font-size: 12px;
+      cursor: pointer; color: var(--text-secondary);
+    }
+    .add-btn:hover { background: var(--bg-secondary); }
+    .upload-btn {
+      padding: 6px 13px; border-radius: var(--radius-md);
+      border: 0.5px solid var(--blue-border);
+      background: var(--blue-bg); font-size: 12px;
+      cursor: pointer; color: var(--blue-text); font-weight: 500;
+    }
+    .upload-btn:hover { opacity: 0.85; }
+    .ibtn {
+      padding: 4px 9px; border: 0.5px solid var(--border);
+      border-radius: var(--radius-md); background: transparent;
+      cursor: pointer; font-size: 11px; color: var(--text-secondary);
+    }
+    .ibtn:hover { background: var(--bg-secondary); }
+    .btn-primary {
+      background: var(--text) !important; color: var(--bg) !important;
+      border-color: var(--text) !important;
+    }
+
+    /* ── FILE CARDS ── */
+    .file-list { display: flex; flex-direction: column; gap: 8px; }
+    .fcard {
+      padding: 12px 15px; border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border);
+      background: var(--bg);
+    }
+    .fcard-main { display: flex; align-items: center; gap: 12px; }
+    .ficon {
+      width: 34px; height: 34px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .finfo { flex: 1; min-width: 0; }
+    .fname {
+      font-size: 13px; font-weight: 500; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .fmeta {
+      font-size: 11px; color: var(--text-secondary);
+      margin-top: 3px; display: flex; align-items: center;
+      gap: 6px; flex-wrap: wrap;
+    }
+    .faction { display: flex; gap: 5px; flex-shrink: 0; }
+    .tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; }
+    .ai-tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; background: var(--purple-bg); color: var(--purple-text); }
+    .section-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; background: var(--bg-secondary); color: var(--text-secondary); }
+    .avatar-xs {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 500; flex-shrink: 0;
+    }
+
+    /* ── COMMENTS ── */
+    .comment-area { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+    .comment-item { display: flex; gap: 8px; margin-bottom: 8px; }
+    .comment-body {
+      flex: 1; background: var(--bg-secondary);
+      border-radius: var(--radius-md); padding: 7px 10px;
+      font-size: 12px; color: var(--text); line-height: 1.4;
+    }
+    .comment-author { font-weight: 500; margin-right: 5px; }
+    .comment-time { font-size: 10px; color: var(--text-tertiary); display: block; margin-top: 2px; }
+    .reactions { display: flex; gap: 5px; margin: 6px 0; flex-wrap: wrap; }
+    .reaction-btn {
+      padding: 3px 9px; border-radius: 20px;
+      border: 0.5px solid var(--border); background: transparent;
+      font-size: 11px; cursor: pointer; color: var(--text-secondary);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .reaction-btn:hover { background: var(--bg-secondary); }
+    .reaction-btn.active { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+    .comment-input-row { display: flex; gap: 6px; margin-top: 6px; }
+    .comment-input-row input {
+      flex: 1; font-size: 12px; padding: 6px 10px;
+      border-radius: var(--radius-md); border: 0.5px solid var(--border-md);
+      background: var(--bg); color: var(--text); outline: none;
+    }
+    .comment-input-row input:focus { border-color: var(--blue-border); }
+
+    /* ── PAPER GRID ── */
+    .paper-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .pcard {
+      padding: 15px; border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border); background: var(--bg);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .ptitle { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+    .pabstract {
+      font-size: 12px; color: var(--text-secondary); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .pfoot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+
+    /* ── MEMBER GRID ── */
+    .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .ccard {
+      padding: 16px; border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border); background: var(--bg); text-align: center;
+    }
+    .cavatar {
+      width: 54px; height: 54px; border-radius: 50%;
+      margin: 0 auto 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; font-weight: 500;
+    }
+    .cavatar img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; }
+    .cname { font-size: 14px; font-weight: 500; color: var(--text); }
+    .crole { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .cbio { font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; text-align: left; }
+    .ccount { font-size: 11px; color: var(--text-secondary); margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+
+    /* ── ANALYZING / AI RESULT ── */
+    .analyzing {
+      display: none; align-items: center; gap: 10px; padding: 14px;
+      border-radius: var(--radius-lg); border: 0.5px solid var(--blue-border);
+      background: var(--blue-bg); font-size: 13px; color: var(--blue-text);
+      margin-bottom: 10px;
+    }
+    .analyzing.visible { display: flex; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(24,95,165,0.3);
+      border-top-color: var(--blue-border); border-radius: 50%;
+      animation: spin 0.7s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .result-box {
+      display: none; margin-bottom: 12px; padding: 14px;
+      border-radius: var(--radius-lg); border: 0.5px solid var(--border-md);
+      background: var(--bg-secondary);
+    }
+    .result-box.visible { display: block; }
+    .result-box label { font-size: 11px; color: var(--text-secondary); display: block; margin-bottom: 3px; margin-top: 8px; }
+    .result-box label:first-of-type { margin-top: 0; }
+    .result-box input {
+      width: 100%; font-size: 13px; padding: 6px 9px;
+      border-radius: var(--radius-md); border: 0.5px solid var(--border-md);
+      background: var(--bg); color: var(--text); outline: none;
+    }
+    .result-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 100;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg); border-radius: var(--radius-xl);
+      padding: 1.5rem; width: 100%; max-width: 380px;
+      border: 0.5px solid var(--border-md);
+    }
+    .modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 1rem; color: var(--text); }
+    .modal input, .modal select, .modal textarea {
+      width: 100%; margin-bottom: 9px; font-size: 13px;
+      padding: 7px 10px; border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-md);
+      background: var(--bg); color: var(--text); outline: none;
+      font-family: inherit;
+    }
+    .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--blue-border); }
+    .modal textarea { min-height: 72px; resize: vertical; }
+    .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+    .modal-btns button {
+      padding: 7px 16px; border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-md); font-size: 13px;
+      cursor: pointer; background: transparent; color: var(--text);
+      font-family: inherit;
+    }
+
+    /* ── GISCUS ── */
+    .giscus-section { margin-top: 3rem; padding-top: 2rem; border-top: 0.5px solid var(--border); }
+    .giscus-section h2 { font-size: 15px; font-weight: 500; margin-bottom: 1rem; color: var(--text); }
+    .giscus-placeholder {
+      padding: 20px; border-radius: var(--radius-lg);
+      border: 0.5px dashed var(--border-md);
+      text-align: center; font-size: 13px; color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .giscus-placeholder code {
+      background: var(--bg-secondary); padding: 2px 6px;
+      border-radius: 4px; font-size: 12px; color: var(--text);
+    }
+
+    /* ── EMPTY ── */
+    .empty {
+      text-align: center; padding: 2.5rem 1rem;
+      color: var(--text-secondary); font-size: 13px;
+      border: 0.5px dashed var(--border-md); border-radius: var(--radius-lg);
+    }
+    .no-results { text-align: center; padding: 1.5rem; color: var(--text-secondary); font-size: 13px; }
+    .highlight { background: var(--highlight); border-radius: 2px; padding: 0 2px; color: var(--amber-text); }
+
+    a { color: var(--blue-text); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-brand">PhD Resource Hub <span>· Your Cohort</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--text-secondary)">Shared privately with your cohort</span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="var(--text-secondary)" stroke-width="1.3"/>
+        <line x1="10" y1="10" x2="13.5" y2="13.5" stroke="var(--text-secondary)" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <input class="search-input" id="search-input" type="text" placeholder="Search across all resources…" oninput="handleSearch(this.value)" />
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div class="search-results" id="search-results">
+      <div class="search-label" id="search-label"></div>
+      <div class="file-list" id="search-list"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('syllabi')">Syllabi</button>
+        <button class="tab" onclick="switchTab('notes')">Notes</button>
+        <button class="tab" onclick="switchTab('ta')">TA Resources</button>
+        <button class="tab" onclick="switchTab('grants')">Grants</button>
+        <button class="tab" onclick="switchTab('papers')">Papers</button>
+        <button class="tab" onclick="switchTab('members')">Members</button>
+      </div>
+
+      <!-- SYLLABI -->
+      <div id="tab-syllabi" class="section active">
+        <div class="sec-hdr">
+          <span class="sec-title">Course syllabi</span>
+          <button class="add-btn" onclick="openModal('file','syllabi')">+ Add file</button>
+        </div>
+        <div class="file-list" id="list-syllabi"></div>
+      </div>
+
+      <!-- NOTES -->
+      <div id="tab-notes" class="section">
+        <div class="sec-hdr">
+          <span class="sec-title">Lecture &amp; study notes</span>
+          <div class="btn-row">
+            <button class="upload-btn" onclick="document.getElementById('pdf-upload').click()">⬆ Upload PDF</button>
+            <button class="add-btn" onclick="openModal('file','notes')">+ Add manually</button>
+          </div>
+        </div>
+        <input type="file" id="pdf-upload" accept="application/pdf" style="display:none" onchange="handlePDF(this)" />
+        <div class="analyzing" id="analyzing-box">
+          <div class="spinner"></div>
+          <span>Reading PDF with AI…</span>
+        </div>
+        <div class="result-box" id="result-box">
+          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">AI detected the following — edit if needed:</div>
+          <label>Title</label>
+          <input id="r-title" type="text" />
+          <label>Year</label>
+          <input id="r-year" type="text" placeholder="e.g. 2024" style="max-width:160px" />
+          <div class="result-row">
+            <button class="ibtn" onclick="cancelResult()">Cancel</button>
+            <button class="ibtn btn-primary" onclick="confirmResult()">Add to notes</button>
+          </div>
+        </div>
+        <div class="file-list" id="list-notes"></div>
+      </div>
+
+      <!-- TA -->
+      <div id="tab-ta" class="section">
+        <div class="sec-hdr">
+          <span class="sec-title">Teaching assistantship resources</span>
+          <button class="add-btn" onclick="openModal('file','ta')">+ Add file</button>
+        </div>
+        <div class="file-list" id="list-ta"></div>
+      </div>
+
+      <!-- GRANTS -->
+      <div id="tab-grants" class="section">
+        <div class="sec-hdr">
+          <span class="sec-title">Grant opportunities</span>
+          <button class="add-btn" onclick="openModal('file','grants')">+ Add file</button>
+        </div>
+        <div class="file-list" id="list-grants"></div>
+      </div>
+
+      <!-- PAPERS -->
+      <div id="tab-papers" class="section">
+        <div class="sec-hdr">
+          <span class="sec-title">Papers &amp; articles</span>
+          <button class="add-btn" onclick="openModal('paper')">+ Add paper</button>
+        </div>
+        <div class="paper-grid" id="list-papers"></div>
+      </div>
+
+      <!-- MEMBERS -->
+      <div id="tab-members" class="section">
+        <div class="sec-hdr">
+          <span class="sec-title">Cohort members</span>
+          <button class="add-btn" onclick="openModal('member')">+ Add member</button>
+        </div>
+        <div class="member-grid" id="list-members"></div>
+      </div>
+    </div>
+
+    <!-- GISCUS COMMENTS (replace script with your own from giscus.app) -->
+    <div class="giscus-section">
+      <h2>Discussion</h2>
+      <div class="giscus-placeholder">
+        <p>To enable GitHub-powered comments, replace this block with your <strong>Giscus</strong> script.</p>
+        <p style="margin-top:8px">Visit <a href="https://giscus.app" target="_blank">giscus.app</a>, connect your repo, and paste the <code>&lt;script&gt;</code> tag here.</p>
+      </div>
+      <!-- PASTE YOUR GISCUS SCRIPT HERE -->
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-bg">
+    <div class="modal">
+      <h3 id="modal-title">Add resource</h3>
+      <div id="modal-body"></div>
+      <div class="modal-btns">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveModal()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── DATA ── */
+    const STORAGE_KEY = 'phd-hub-data-v1';
+    const SECT_ICONS  = { syllabi:'📄', notes:'📝', ta:'🏫', grants:'💰', papers:'📰' };
+    const SECT_COLORS = {
+      syllabi: { bg:'var(--blue-bg)',   text:'var(--blue-text)'   },
+      notes:   { bg:'var(--green-bg)',  text:'var(--green-text)'  },
+      ta:      { bg:'var(--purple-bg)', text:'var(--purple-text)' },
+      grants:  { bg:'var(--amber-bg)',  text:'var(--amber-text)'  },
+      papers:  { bg:'var(--coral-bg)',  text:'var(--coral-text)'  },
+    };
+    const SECT_LABELS = { syllabi:'Syllabus', notes:'Notes', ta:'TA Resource', grants:'Grant', papers:'Paper' };
+    const AVATAR_PALETTES = [
+      { bg:'var(--blue-bg)',   text:'var(--blue-text)'   },
+      { bg:'var(--purple-bg)', text:'var(--purple-text)' },
+      { bg:'var(--green-bg)',  text:'var(--green-text)'  },
+      { bg:'var(--amber-bg)',  text:'var(--amber-text)'  },
+      { bg:'var(--coral-bg)',  text:'var(--coral-text)'  },
+    ];
+
+    function loadData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData(); }
+      catch(e) { return defaultData(); }
+    }
+    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    function defaultData() {
+      return { syllabi:[], notes:[], ta:[], grants:[], papers:[], members:[] };
+    }
+
+    let data = loadData();
+    let modalType = '', modalSection = '', currentTab = 'syllabi';
+
+    /* ── HELPERS ── */
+    function initials(name) {
+      return (name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    }
+    function avatarColor(name) {
+      let h = 0; for (const c of (name||'')) h += c.charCodeAt(0);
+      return AVATAR_PALETTES[h % AVATAR_PALETTES.length];
+    }
+    function now() {
+      return new Date().toLocaleDateString('en-US', { month:'short', year:'numeric' });
+    }
+    function hl(text, q) {
+      if (!q || !text) return text||'';
+      const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+      return String(text).replace(re, '<span class="highlight">$1</span>');
+    }
+    function contribCount(name) {
+      let n = 0;
+      ['syllabi','notes','ta','grants'].forEach(s => {
+        n += data[s].filter(f => f.contributor === name).length;
+      });
+      n += data.papers.filter(p => p.contributor === name).length;
+      return n;
+    }
+
+    /* ── SEARCH ── */
+    function handleSearch(q) {
+      const sr = document.getElementById('search-results');
+      const mc = document.getElementById('main-content');
+      q = q.trim();
+      if (!q) { sr.classList.remove('visible'); mc.style.display = ''; return; }
+      mc.style.display = 'none';
+      sr.classList.add('visible');
+
+      const results = [];
+      ['syllabi','notes','ta','grants','papers'].forEach(sec => {
+        data[sec].forEach((item, i) => {
+          const fields = [item.name, item.tag, item.year, item.contributor, item.authors, item.venue];
+          if (fields.some(f => (f||'').toLowerCase().includes(q.toLowerCase()))) {
+            results.push({ sec, item, i });
+          }
+        });
+      });
+      data.members.forEach((m, i) => {
+        if ([m.name, m.area, m.year, m.bio].some(f => (f||'').toLowerCase().includes(q.toLowerCase()))) {
+          results.push({ sec:'members', item:m, i });
+        }
+      });
+
+      document.getElementById('search-label').textContent =
+        results.length ? results.length + ' result' + (results.length !== 1 ? 's' : '') + ' for "' + q + '"' : '';
+
+      if (!results.length) {
+        document.getElementById('search-list').innerHTML = '<div class="no-results">No results found for "' + q + '"</div>';
+        return;
+      }
+
+      document.getElementById('search-list').innerHTML = results.map(({ sec, item }) => {
+        if (sec === 'members') {
+          const col = avatarColor(item.name);
+          return `<div class="fcard"><div class="fcard-main">
+            <div class="ficon" style="background:${col.bg};color:${col.text};border-radius:50%">${initials(item.name)}</div>
+            <div class="finfo">
+              <div class="fname">${hl(item.name,q)}</div>
+              <div class="fmeta">${hl(item.year||'',q)}${item.area?' · '+hl(item.area,q):''}</div>
+            </div>
+            <span class="section-badge">Member</span>
+          </div></div>`;
+        }
+        const col = SECT_COLORS[sec];
+        const cc = item.contributor ? avatarColor(item.contributor) : null;
+        return `<div class="fcard"><div class="fcard-main">
+          <div class="ficon" style="background:${col.bg};color:${col.text}">${SECT_ICONS[sec]}</div>
+          <div class="finfo">
+            <div class="fname">${hl(item.name,q)}</div>
+            <div class="fmeta">
+              ${item.year ? `<span class="tag" style="background:${col.bg};color:${col.text}">${hl(item.year,q)}</span>` : ''}
+              ${item.tag  ? `<span class="tag" style="background:${col.bg};color:${col.text}">${hl(item.tag,q)}</span>`  : ''}
+              ${cc ? `<span class="avatar-xs" style="background:${cc.bg};color:${cc.text}">${initials(item.contributor)}</span><span>${hl(item.contributor,q)}</span>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="section-badge">${SECT_LABELS[sec]}</span>
+            ${item.url ? `<a class="ibtn" href="${item.url}" target="_blank">Open</a>` : ''}
+          </div>
+        </div></div>`;
+      }).join('');
+    }
+
+    /* ── TABS ── */
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', ['syllabi','notes','ta','grants','papers','members'][i] === tab);
+      });
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    /* ── MODAL ── */
+    function openModal(type, section='') {
+      modalType = type; modalSection = section;
+      const titles = { file:'Add resource', paper:'Add paper or article', member:'Add cohort member' };
+      document.getElementById('modal-title').textContent = titles[type];
+      const memberOpts = data.members.map(m => `<option>${m.name}</option>`).join('');
+      let html = '';
+      if (type === 'file') {
+        html = `
+          <input id="m-name" type="text" placeholder="Title (e.g. STAT 501 Syllabus)" />
+          <input id="m-url"  type="url"  placeholder="Link or file URL (Google Drive, etc.)" />
+          <input id="m-tag"  type="text" placeholder="Tag (e.g. Fall 2024, Prof. Smith)" />
+          <select id="m-contrib"><option value="">— Contributor (optional) —</option>${memberOpts}</select>`;
+      } else if (type === 'paper') {
+        html = `
+          <input id="p-title"   type="text" placeholder="Paper title" />
+          <input id="p-authors" type="text" placeholder="Authors (e.g. Rivera A., Chen S.)" />
+          <input id="p-venue"   type="text" placeholder="Journal or venue" />
+          <textarea id="p-abstract" placeholder="Short abstract or description"></textarea>
+          <input id="p-url"  type="url"  placeholder="Link to paper (optional)" />
+          <select id="p-contrib"><option value="">— Your name —</option>${memberOpts}</select>`;
+      } else if (type === 'member') {
+        html = `
+          <input id="c-name"  type="text" placeholder="Full name" />
+          <input id="c-year"  type="text" placeholder="Program year (e.g. 2nd year)" />
+          <input id="c-area"  type="text" placeholder="Research area" />
+          <textarea id="c-bio" placeholder="Short bio"></textarea>
+          <input id="c-photo" type="url"  placeholder="Photo URL (optional)" />`;
+      }
+      document.getElementById('modal-body').innerHTML = html;
+      document.getElementById('modal-bg').classList.add('open');
+    }
+
+    function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+
+    function saveModal() {
+      if (modalType === 'file') {
+        const name = document.getElementById('m-name').value.trim();
+        if (!name) return;
+        data[modalSection].push({
+          name, url: document.getElementById('m-url').value.trim(),
+          tag: document.getElementById('m-tag').value.trim(),
+          contributor: document.getElementById('m-contrib').value,
+          date: now(), comments: [], reactions: { helpful:0, insightful:0 }
+        });
+      } else if (modalType === 'paper') {
+        const name = document.getElementById('p-title').value.trim();
+        if (!name) return;
+        data.papers.push({
+          name, authors: document.getElementById('p-authors').value.trim(),
+          venue: document.getElementById('p-venue').value.trim(),
+          abstract: document.getElementById('p-abstract').value.trim(),
+          url: document.getElementById('p-url').value.trim(),
+          contributor: document.getElementById('p-contrib').value,
+          date: now(), comments: [], reactions: { helpful:0, insightful:0 }
+        });
+      } else if (modalType === 'member') {
+        const name = document.getElementById('c-name').value.trim();
+        if (!name) return;
+        data.members.push({
+          name, year: document.getElementById('c-year').value.trim(),
+          area: document.getElementById('c-area').value.trim(),
+          bio: document.getElementById('c-bio').value.trim(),
+          photo: document.getElementById('c-photo').value.trim()
+        });
+      }
+      saveData(); closeModal(); renderAll();
+    }
+
+    document.getElementById('modal-bg').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    /* ── COMMENTS & REACTIONS ── */
+    function addComment(sec, idx, inputId) {
+      const val = document.getElementById(inputId).value.trim();
+      if (!val) return;
+      const author = data.members[0]?.name || 'You';
+      const target = sec === 'papers' ? data.papers[idx] : data[sec][idx];
+      target.comments.push({ author, text: val, time: 'just now' });
+      document.getElementById(inputId).value = '';
+      saveData(); renderAll(); switchTab(sec === 'papers' ? 'papers' : sec);
+    }
+
+    function toggleReaction(sec, idx, reaction) {
+      const target = sec === 'papers' ? data.papers[idx] : data[sec][idx];
+      target.reactions[reaction] = (target.reactions[reaction] || 0) + 1;
+      saveData(); renderAll(); switchTab(sec === 'papers' ? 'papers' : sec);
+    }
+
+    /* ── RENDER HELPERS ── */
+    function commentsHtml(item, sec, idx) {
+      const comments = (item.comments || []).map(c => {
+        const cc = avatarColor(c.author);
+        return `<div class="comment-item">
+          <span class="avatar-xs" style="background:${cc.bg};color:${cc.text};margin-top:2px">${initials(c.author)}</span>
+          <div class="comment-body">
+            <span class="comment-author">${c.author}</span>${c.text}
+            <span class="comment-time">${c.time}</span>
+          </div>
+        </div>`;
+      }).join('');
+      const commId = `comm-${sec}-${idx}`;
+      const r = item.reactions || {};
+      return `<div class="comment-area">
+        ${comments}
+        <div class="reactions">
+          <button class="reaction-btn${r.helpful?' active':''}" onclick="toggleReaction('${sec}',${idx},'helpful')">👍 Helpful ${r.helpful||0}</button>
+          <button class="reaction-btn" onclick="toggleReaction('${sec}',${idx},'insightful')">💡 Insightful ${r.insightful||0}</button>
+        </div>
+        <div class="comment-input-row">
+          <input id="${commId}" type="text" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addComment('${sec}',${idx},'${commId}')" />
+          <button class="ibtn" onclick="addComment('${sec}',${idx},'${commId}')">Post</button>
+        </div>
+      </div>`;
+    }
+
+    /* ── RENDER SECTIONS ── */
+    function renderSection(sec) {
+      const list = document.getElementById('list-' + sec);
+      const items = data[sec];
+      const empties = {
+        syllabi: 'No syllabi yet — click "+ Add file" to get started',
+        notes:   'No notes yet — upload a PDF or add manually',
+        ta:      'No TA resources yet',
+        grants:  'No grant opportunities yet',
+        papers:  'No papers yet — click "+ Add paper" to share your work',
+      };
+      if (!items.length) { list.innerHTML = `<div class="empty">${empties[sec]}</div>`; return; }
+      const col = SECT_COLORS[sec];
+      list.innerHTML = items.map((item, i) => {
+        const cc = item.contributor ? avatarColor(item.contributor) : null;
+        return `<div class="fcard">
+          <div class="fcard-main">
+            <div class="ficon" style="background:${col.bg};color:${col.text}">${SECT_ICONS[sec]}</div>
+            <div class="finfo">
+              <div class="fname">${item.name}</div>
+              <div class="fmeta">
+                ${item.year ? `<span class="tag" style="background:${col.bg};color:${col.text}">${item.year}</span>` : ''}
+                ${item.tag  ? `<span class="tag" style="background:${col.bg};color:${col.text}">${item.tag}</span>`  : ''}
+                ${item.aiDetected ? '<span class="ai-tag">AI detected</span>' : ''}
+                ${cc ? `<span class="avatar-xs" style="background:${cc.bg};color:${cc.text}">${initials(item.contributor)}</span><span>${item.contributor}</span>` : ''}
+                ${item.date ? `<span>${item.date}</span>` : ''}
+              </div>
+            </div>
+            <div class="faction">
+              ${item.url ? `<a class="ibtn" href="${item.url}" target="_blank">Open</a>` : ''}
+              <button class="ibtn" onclick="data['${sec}'].splice(${i},1);saveData();renderAll()">Remove</button>
+            </div>
+          </div>
+          ${commentsHtml(item, sec, i)}
+        </div>`;
+      }).join('');
+    }
+
+    function renderPapers() {
+      const list = document.getElementById('list-papers');
+      if (!data.papers.length) {
+        list.innerHTML = '<div class="empty" style="grid-column:1/-1">No papers yet — share your first one!</div>';
+        return;
+      }
+      list.innerHTML = data.papers.map((p, i) => {
+        const cc = p.contributor ? avatarColor(p.contributor) : null;
+        return `<div class="pcard">
+          <div class="ptitle">${p.name}</div>
+          ${p.authors ? `<div style="font-size:11px;color:var(--text-secondary)">${p.authors}</div>` : ''}
+          ${p.venue   ? `<span class="tag" style="background:var(--purple-bg);color:var(--purple-text);width:fit-content">${p.venue}</span>` : ''}
+          ${p.abstract? `<div class="pabstract">${p.abstract}</div>` : ''}
+          <div class="pfoot">
+            ${cc ? `<div style="display:flex;align-items:center;gap:5px"><span class="avatar-xs" style="background:${cc.bg};color:${cc.text}">${initials(p.contributor)}</span><span style="font-size:11px;color:var(--text-secondary)">${p.contributor}</span></div>` : '<span></span>'}
+            ${p.url ? `<a href="${p.url}" target="_blank" style="font-size:11px">View paper</a>` : ''}
+          </div>
+          ${commentsHtml(p, 'papers', i)}
+        </div>`;
+      }).join('');
+    }
+
+    function renderMembers() {
+      const list = document.getElementById('list-members');
+      if (!data.members.length) { list.innerHTML = '<div class="empty">No members yet — add your cohort!</div>'; return; }
+      list.innerHTML = data.members.map((m, i) => {
+        const col = avatarColor(m.name);
+        const count = contribCount(m.name);
+        return `<div class="ccard">
+          ${m.photo
+            ? `<div class="cavatar"><img src="${m.photo}" alt="${m.name}" onerror="this.parentElement.innerHTML='${initials(m.name)}';this.parentElement.style.background='${col.bg}';this.parentElement.style.color='${col.text}'" /></div>`
+            : `<div class="cavatar" style="background:${col.bg};color:${col.text}">${initials(m.name)}</div>`}
+          <div class="cname">${m.name}</div>
+          ${m.year || m.area ? `<div class="crole">${[m.year, m.area].filter(Boolean).join(' · ')}</div>` : ''}
+          ${m.bio ? `<div class="cbio">${m.bio}</div>` : ''}
+          <div class="ccount">${count} contribution${count !== 1 ? 's' : ''}</div>
+          <button class="ibtn" style="margin-top:10px;width:100%" onclick="data.members.splice(${i},1);saveData();renderAll()">Remove</button>
+        </div>`;
+      }).join('');
+    }
+
+    function renderAll() {
+      ['syllabi','notes','ta','grants'].forEach(renderSection);
+      renderPapers();
+      renderMembers();
+      const q = document.getElementById('search-input').value.trim();
+      if (q) handleSearch(q);
+    }
+
+    /* ── PDF / AI ── */
+    async function handlePDF(input) {
+      const file = input.files[0]; if (!file) return; input.value = '';
+      document.getElementById('result-box').classList.remove('visible');
+      document.getElementById('analyzing-box').classList.add('visible');
+      switchTab('notes');
+      try {
+        const base64 = await toBase64(file);
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 300,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+                { type: 'text', text: 'Extract the title and year from this document. Respond ONLY with a JSON object like {"title":"...","year":"..."} — no preamble, no backticks. If you cannot find the year, use an empty string.' }
+              ]
+            }]
+          })
+        });
+        const result = await resp.json();
+        const text = result.content?.find(b => b.type === 'text')?.text || '{}';
+        const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+        document.getElementById('r-title').value = parsed.title || file.name.replace(/\.pdf$/i,'');
+        document.getElementById('r-year').value  = parsed.year  || '';
+      } catch(e) {
+        document.getElementById('r-title').value = file.name.replace(/\.pdf$/i,'');
+        document.getElementById('r-year').value  = '';
+      }
+      document.getElementById('analyzing-box').classList.remove('visible');
+      document.getElementById('result-box').classList.add('visible');
+    }
+
+    function toBase64(file) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload  = () => res(r.result.split(',')[1]);
+        r.onerror = () => rej(new Error('Read failed'));
+        r.readAsDataURL(file);
+      });
+    }
+
+    function confirmResult() {
+      const title = document.getElementById('r-title').value.trim();
+      if (!title) return;
+      data.notes.push({
+        name: title, year: document.getElementById('r-year').value.trim(),
+        tag: '', aiDetected: true, contributor: '', date: now(),
+        comments: [], reactions: { helpful:0, insightful:0 }
+      });
+      document.getElementById('result-box').classList.remove('visible');
+      saveData(); renderAll();
+    }
+
+    function cancelResult() { document.getElementById('result-box').classList.remove('visible'); }
+
+    /* ── INIT ── */
+    renderAll();
+  </script>
+
+</body>
+</html>
